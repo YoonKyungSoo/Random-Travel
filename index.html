@@ -32,31 +32,6 @@
                 <button id="favoriteBtn" class="btn accent hidden">❤️ 즐겨찾기</button>
             </div>
 
-            <!-- 경로 그리기 컨트롤 -->
-            <div class="route-controls">
-                <h3>🗺️ 경로 그리기</h3>
-                <div class="route-buttons">
-                    <button type="button" onclick="javascript:jsCreatRoute('test1');" class="btn small">RouteMap1생성</button>
-                    <button type="button" onclick="javascript:jsAddRouteEvent('test1');" class="btn small">경로추가</button>
-                    <button type="button" onclick="javascript:jsInit('test1');" class="btn small">입력완료</button>
-                    <button type="button" onclick="javascript:setColor('test1');" class="btn small">라인색상교체</button>
-                    <button type="button" onclick="javascript:setWidth('test1');" class="btn small">라인크기교체</button>
-                    <button type="button" onclick="javascript:closeAllPop('test1');" class="btn small">팝업전체닫기</button>
-                    <button type="button" onclick="javascript:openAllPop('test1');" class="btn small">팝업전체열기</button>
-                    <button type="button" onclick="javascript:jsRemoveRoute('test1');" class="btn small">RouteMap1삭제</button>
-                </div>
-                <div class="route-buttons">
-                    <button type="button" onclick="javascript:jsCreatRoute('test2');" class="btn small">RouteMap2생성</button>
-                    <button type="button" onclick="javascript:jsAddRouteEvent('test2');" class="btn small">경로추가</button>
-                    <button type="button" onclick="javascript:jsInit('test2');" class="btn small">입력완료</button>
-                    <button type="button" onclick="javascript:setColor('test2');" class="btn small">라인색상교체</button>
-                    <button type="button" onclick="javascript:setWidth('test2');" class="btn small">라인크기교체</button>
-                    <button type="button" onclick="javascript:closeAllPop('test2');" class="btn small">팝업전체닫기</button>
-                    <button type="button" onclick="javascript:openAllPop('test2');" class="btn small">팝업전체열기</button>
-                    <button type="button" onclick="javascript:jsRemoveRoute('test2');" class="btn small">RouteMap2삭제</button>
-                </div>
-            </div>
-
             <!-- 결과 표시 영역 -->
             <div id="resultCard" class="result-card hidden">
                 <h3>🎉 여행지가 선택되었습니다!</h3>
@@ -66,29 +41,40 @@
                 </div>
                 <div class="action-buttons">
                     <button id="shareBtn" class="btn small">📤 공유하기</button>
-                    <button id="saveBtn" class="btn small">💾 저장하기</button>
                 </div>
             </div>
 
-            <!-- 저장된 정보 표시 영역 -->
-            <div id="savedInfo" class="saved-info hidden">
-                <h3>💾 저장된 정보</h3>
-                <div id="routeInfo" class="route-info">
-                    <h4>🗺️ 경로 설정</h4>
-                    <div id="routeDetails"></div>
-                </div>
-                <div id="favoritesList" class="favorites-list">
-                    <h4>❤️ 즐겨찾기한 여행지</h4>
-                    <div id="favoritesContainer"></div>
-                </div>
-            </div>
+                    <!-- 즐겨찾기 목록 영역 -->
+        <div id="favoritesSection" class="favorites-section">
+            <h3>❤️ 즐겨찾기한 여행지</h3>
+            <div id="favoritesContainer"></div>
+        </div>
         </div>
     </div>
     
    
+    <!-- 지역 데이터 파일들 -->
+    <script src="locations/seoul-locations.js"></script>
+    <script src="locations/busan-locations.js"></script>
+    <script src="locations/daegu-locations.js"></script>
+    <script src="locations/incheon-locations.js"></script>
+    <script src="locations/gwangju-locations.js"></script>
+    <script src="locations/daejeon-locations.js"></script>
+    <script src="locations/ulsan-locations.js"></script>
+    <script src="locations/sejong-locations.js"></script>
+    <script src="locations/gyeonggi-locations.js"></script>
+    <script src="locations/gangwon-locations.js"></script>
+    <script src="locations/chungbuk-locations.js"></script>
+    <script src="locations/chungnam-locations.js"></script>
+    <script src="locations/jeonbuk-locations.js"></script>
+    <script src="locations/jeonnam-locations.js"></script>
+    <script src="locations/gyeongbuk-locations.js"></script>
+    <script src="locations/gyeongnam-locations.js"></script>
+    <script src="locations/jeju-locations.js"></script>
+    
     <!-- 애플리케이션 기능 -->
+    <script src="script.js"></script>
     <script>
-        var map;
         var tempMarker = null;
         var routeMap1 = null;
         var routeMap2 = null;
@@ -97,6 +83,9 @@
         window.addEventListener('load', function() {
             // 카카오맵 API 로딩 확인 및 초기화
             checkKakaoMapAPI();
+            
+            // 저장된 즐겨찾기 불러오기
+            loadFavorites();
         });
         
         // 카카오맵 API 로딩 확인
@@ -170,25 +159,13 @@
         // 카카오맵 초기화
         function initializeMap() {
             try {
-                var container = document.getElementById('map');
-                var options = {
-                    center: new kakao.maps.LatLng(36.5, 127.5), // 한국 중심
-                    level: 7
-                };
-
-                map = new kakao.maps.Map(container, options);
-                console.log('✅ 카카오맵 초기화 완료!');
-                
-                // 지도 클릭 이벤트 설정
-                kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
-                    handleMapClick(mouseEvent);
-                });
-                
-                // 지도 로드 완료 이벤트
-                kakao.maps.event.addListener(map, 'tilesloaded', function() {
-                    console.log('지도 타일 로드 완료');
-                });
-                
+                // script.js의 initializeMap 함수 호출
+                if (typeof window.initializeMap === 'function') {
+                    window.initializeMap();
+                    console.log('✅ 카카오맵 초기화 완료!');
+                } else {
+                    console.error('script.js의 initializeMap 함수를 찾을 수 없습니다.');
+                }
             } catch (error) {
                 console.error('지도 초기화 오류:', error);
                 // 오류 발생 시 재시도
@@ -196,88 +173,22 @@
             }
         }
         
-        // 지도 클릭 이벤트 처리
-        function handleMapClick(mouseEvent) {
-            if (!map) return;
-            
-            try {
-                // 클릭한 위치의 좌표
-                const latlng = mouseEvent.latLng;
-                const coordinate = [latlng.getLng(), latlng.getLat()];
-                
-                // 클릭한 위치에 마커 표시
-                showMarkerAtLocation(coordinate, '클릭한 위치');
-            } catch (error) {
-                console.log('지도 클릭 이벤트 처리 오류:', error);
-            }
-        }
-        
-        // 위치에 마커 표시
-        function showMarkerAtLocation(coordinate, locationName) {
-            if (!map) return;
-            
-            try {
-                // 기존 마커 제거
-                if (tempMarker) {
-                    tempMarker.setMap(null);
-                }
-                
-                // 새 마커 생성 (카카오맵 API 사용)
-                tempMarker = new kakao.maps.Marker({
-                    position: new kakao.maps.LatLng(coordinate[1], coordinate[0])
-                });
-                
-                // 마커를 지도에 추가
-                tempMarker.setMap(map);
-                
-                // 마커 클릭 시 정보창 표시
-                const infowindow = new kakao.maps.InfoWindow({
-                    content: `<div style="padding:10px;text-align:center;"><strong>${locationName}</strong></div>`
-                });
-                
-                kakao.maps.event.addListener(tempMarker, 'click', function() {
-                    infowindow.open(map, tempMarker);
-                });
-                
-                console.log('마커 추가 완료:', locationName);
-            } catch (error) {
-                console.error('마커 생성 오류:', error);
-            }
-        }
+
         
         // 랜덤 여행지 선택
         function pickRandomLocation() {
-            if (!map) {
+            if (!window.map) {
                 alert('지도가 로드되지 않았습니다. 잠시 후 다시 시도해주세요.');
                 return;
             }
             
             try {
-                // 한국 지역 좌표 (위도, 경도 순서)
-                const koreaLocations = [
-                    { name: '서울', coordinate: [127.0, 37.5] },
-                    { name: '부산', coordinate: [129.0, 35.1] },
-                    { name: '대구', coordinate: [128.6, 35.9] },
-                    { name: '인천', coordinate: [126.7, 37.5] },
-                    { name: '광주', coordinate: [126.9, 35.2] },
-                    { name: '대전', coordinate: [127.4, 36.3] },
-                    { name: '울산', coordinate: [129.3, 35.5] },
-                    { name: '세종', coordinate: [127.3, 36.5] },
-                    { name: '제주', coordinate: [126.5, 33.4] }
-                ];
-                
-                // 랜덤하게 위치 선택
-                const randomLocation = koreaLocations[Math.floor(Math.random() * koreaLocations.length)];
-                
-                // 지도를 해당 위치로 이동 (카카오맵 API 사용)
-                map.setCenter(new kakao.maps.LatLng(randomLocation.coordinate[1], randomLocation.coordinate[0]));
-                map.setLevel(8); // 적당한 줌 레벨
-                
-                // 마커 표시
-                showMarkerAtLocation(randomLocation.coordinate, randomLocation.name);
-                
-                // 결과 표시
-                showResult(randomLocation.name);
+                // script.js의 pickRandomLocation 함수 사용
+                if (typeof window.pickRandomLocation === 'function') {
+                    window.pickRandomLocation();
+                } else {
+                    alert('랜덤 여행지 선택 기능을 사용할 수 없습니다.');
+                }
             } catch (error) {
                 console.error('랜덤 여행지 선택 오류:', error);
                 alert('여행지 선택 중 오류가 발생했습니다.');
@@ -285,108 +196,103 @@
         }
         
         // 결과 표시
-        function showResult(locationName) {
+        function showResult(locationName, locationDescription = null) {
             document.getElementById('locationName').textContent = locationName;
-            document.getElementById('locationDescription').textContent = `${locationName}에서 멋진 여행을 즐겨보세요!`;
+            if (locationDescription) {
+                document.getElementById('locationDescription').textContent = locationDescription;
+            } else {
+                document.getElementById('locationDescription').textContent = `${locationName}에서 멋진 여행을 즐겨보세요!`;
+            }
             document.getElementById('resultCard').classList.remove('hidden');
             document.getElementById('favoriteBtn').classList.remove('hidden');
         }
         
         // 즐겨찾기 추가
-        function addToFavorites() {
-            const locationName = document.getElementById('locationName').textContent;
-            if (!locationName) return;
-            
-            // 로컬 스토리지에 저장
-            let favorites = JSON.parse(localStorage.getItem('travelFavorites') || '[]');
-            const favorite = {
-                name: locationName,
-                timestamp: new Date().toISOString(),
-                id: Date.now()
-            };
-            
-            // 중복 체크
-            const isDuplicate = favorites.some(fav => fav.name === locationName);
-            if (isDuplicate) {
-                alert('이미 즐겨찾기에 추가된 여행지입니다!');
-                return;
+        function addToFavorites(location = null) {
+            try {
+                // script.js의 addToFavorites 함수 사용
+                if (typeof window.addToFavorites === 'function' && location) {
+                    window.addToFavorites(location);
+                } else {
+                    alert('즐겨찾기 기능을 사용할 수 없습니다.');
+                }
+            } catch (error) {
+                console.error('즐겨찾기 추가 오류:', error);
+                alert('즐겨찾기 추가 중 오류가 발생했습니다.');
             }
-            
-            favorites.push(favorite);
-            localStorage.setItem('travelFavorites', JSON.stringify(favorites));
-            
-            alert(`${locationName}이(가) 즐겨찾기에 추가되었습니다!`);
-            loadFavorites();
         }
         
         // 즐겨찾기 로드
         function loadFavorites() {
-            const favorites = JSON.parse(localStorage.getItem('travelFavorites') || '[]');
-            const container = document.getElementById('favoritesContainer');
-            
-            if (favorites.length === 0) {
-                container.innerHTML = '<p>아직 즐겨찾기한 여행지가 없습니다.</p>';
-                return;
+            try {
+                // script.js의 updateFavoritesList 함수 사용
+                if (typeof window.updateFavoritesList === 'function') {
+                    window.updateFavoritesList();
+                } else {
+                    // fallback: 로컬 스토리지에서 직접 로드
+                    const favorites = JSON.parse(localStorage.getItem('travelFavorites') || '[]');
+                    const container = document.getElementById('favoritesContainer');
+                    
+                    if (favorites.length === 0) {
+                        container.innerHTML = '<p style="text-align: center; color: #666; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: #f9f9f9;">아직 즐겨찾기한 여행지가 없습니다.<br>랜덤 여행지를 선택하고 ❤️ 즐겨찾기 버튼을 눌러보세요!</p>';
+                        return;
+                    }
+                    
+                    container.innerHTML = favorites.map(fav => `
+                        <div class="favorite-item" style="border: 1px solid #ddd; border-radius: 8px; padding: 15px; margin-bottom: 10px; background: #f9f9f9;">
+                            <h5 style="margin: 0 0 10px 0; color: #333;">${fav.name}</h5>
+                            ${fav.description ? `<p style="margin: 5px 0; color: #666; font-size: 14px;">${fav.description}</p>` : ''}
+                            <p style="margin: 5px 0; color: #888; font-size: 12px;">추가된 날짜: ${new Date(fav.timestamp).toLocaleDateString('ko-KR')}</p>
+                            <button onclick="removeFavorite(${fav.id})" class="btn small" style="background: #ff6b6b; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">삭제</button>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('즐겨찾기 로드 오류:', error);
             }
-            
-            container.innerHTML = favorites.map(fav => `
-                <div class="favorite-item">
-                    <h5>${fav.name}</h5>
-                    <p>추가된 날짜: ${new Date(fav.timestamp).toLocaleDateString('ko-KR')}</p>
-                    <button onclick="removeFavorite(${fav.id})" class="remove-btn">삭제</button>
-                </div>
-            `).join('');
         }
         
         // 즐겨찾기 삭제
         function removeFavorite(id) {
-            let favorites = JSON.parse(localStorage.getItem('travelFavorites') || '[]');
-            favorites = favorites.filter(fav => fav.id !== id);
-            localStorage.setItem('travelFavorites', JSON.stringify(favorites));
-            loadFavorites();
+            try {
+                // script.js의 removeFavoriteById 함수 사용
+                if (typeof window.removeFavoriteById === 'function') {
+                    window.removeFavoriteById(id);
+                } else {
+                    alert('즐겨찾기 삭제 기능을 사용할 수 없습니다.');
+                }
+            } catch (error) {
+                console.error('즐겨찾기 삭제 오류:', error);
+                alert('즐겨찾기 삭제 중 오류가 발생했습니다.');
+            }
         }
         
-        // 저장하기
-        function saveLocation() {
-            const locationName = document.getElementById('locationName').textContent;
-            if (!locationName) return;
-            
-            // 저장된 정보 표시
-            document.getElementById('savedInfo').classList.remove('hidden');
-            
-            // 경로 정보 표시
-            const routeDetails = document.getElementById('routeDetails');
-            if (routeMap1 || routeMap2) {
-                routeDetails.innerHTML = `
-                    <p>✅ 경로가 설정되었습니다!</p>
-                    <p>RouteMap1: ${routeMap1 ? '활성화' : '비활성화'}</p>
-                    <p>RouteMap2: ${routeMap2 ? '활성화' : '비활성화'}</p>
-                `;
-            } else {
-                routeDetails.innerHTML = '<p>아직 경로가 설정되지 않았습니다.</p>';
-            }
-            
-            // 즐겨찾기 로드
-            loadFavorites();
-            
-            alert('위치 정보가 저장되었습니다!');
-        }
+
         
         // 다시하기
         function reset() {
-            // 마커 제거 (카카오맵 API 사용)
-            if (tempMarker && map) {
-                tempMarker.setMap(null);
-                tempMarker = null;
+            try {
+                // script.js의 resetMap 함수 사용
+                if (typeof window.resetMap === 'function') {
+                    window.resetMap();
+                } else {
+                    // fallback: 기본 리셋 기능
+                    if (tempMarker && window.map) {
+                        tempMarker.setMap(null);
+                        tempMarker = null;
+                    }
+                    
+                    document.getElementById('resultCard').classList.add('hidden');
+                    document.getElementById('favoriteBtn').classList.add('hidden');
+                    
+                    if (window.map) {
+                        window.map.setCenter(new kakao.maps.LatLng(36.5, 127.5));
+                        window.map.setLevel(7);
+                    }
+                }
+            } catch (error) {
+                console.error('리셋 오류:', error);
             }
-            
-            // 결과 숨기기
-            document.getElementById('resultCard').classList.add('hidden');
-            document.getElementById('favoriteBtn').classList.add('hidden');
-            
-            // 지도 원래 위치로 (카카오맵 API 사용)
-            map.setCenter(new kakao.maps.LatLng(36.5, 127.5)); // 한국 중심
-            map.setLevel(7);
         }
         
         // 경로 그리기 관련 함수들 (카카오맵 API로 구현)
@@ -580,7 +486,6 @@
             document.getElementById('randomPickBtn').addEventListener('click', pickRandomLocation);
             document.getElementById('resetBtn').addEventListener('click', reset);
             document.getElementById('favoriteBtn').addEventListener('click', addToFavorites);
-            document.getElementById('saveBtn').addEventListener('click', saveLocation);
         });
     </script>
 </body>
