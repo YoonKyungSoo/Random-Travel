@@ -2,7 +2,7 @@
 
 한국 지도에서 랜덤으로 여행지를 선택하는 재미있는 웹 애플리케이션입니다! 릴스에서 유명한 "지도에 핀 던져서 랜덤 여행지 정하기" 컨셉을 구현했습니다. <br>
 
-https://yoonkyungsoo.github.io/Random-Travel-Pick/  
+ https://yoonkyungsoo.github.io/Random-Travel/
 
 ## ✨ 주요 기능
 
