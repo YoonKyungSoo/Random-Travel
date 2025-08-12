@@ -1,6 +1,9 @@
+
+
+
 class RandomTravelPicker {
     constructor() {
-        this.map = document.getElementById('koreaMap');
+        this.map = null; // 지도 API 객체
         this.pin = document.getElementById('pin');
         this.pinLabel = document.getElementById('pinLabel');
         this.resultCard = document.getElementById('resultCard');
@@ -10,9 +13,112 @@ class RandomTravelPicker {
         this.favorites = JSON.parse(localStorage.getItem('travelFavorites') || '[]');
         this.koreaRegions = [];
         
+        // VWorld 경로 그리기 관련 변수들
+        this.mControl = null;
+        this.tempMarker = null;
+        this.routeMap1 = null;
+        this.routeMap2 = null;
+        
+        this.initializeMap();
         this.initializeEventListeners();
         this.loadFavorites();
         this.initializeRegions();
+    }
+
+    initializeMap() {
+        // VWorld API가 로드되었는지 확인
+        if (typeof vw === 'undefined' || !vw.ol3) {
+            console.log('VWorld API가 아직 로드되지 않았습니다. 잠시 후 다시 시도합니다.');
+            setTimeout(() => this.initializeMap(), 2000);
+            return;
+        }
+        
+        try {
+            // 지도 API 초기화 - 더 안전한 방법
+            const mapOptions = {
+                basemapType: vw.ol3.BasemapType.GRAPHIC,
+                controlDensity: vw.ol3.DensityType.EMPTY,
+                interactionDensity: vw.ol3.DensityType.BASIC,
+                controlsAutoArrange: true
+            };
+            
+            console.log('지도 옵션:', mapOptions);
+            console.log('VWorld API 상태:', typeof vw, typeof vw.ol3);
+            
+            // 지도 생성 시도 - try-catch로 오류 처리
+            try {
+                this.map = new vw.ol3.Map("vmap", mapOptions);
+                console.log('✅ 지도 객체 생성 완료:', this.map);
+                
+                // 지도가 로드된 후 이벤트 리스너 추가
+                if (this.map && typeof this.map.on === 'function') {
+                    this.map.on('loadend', () => {
+                        console.log('지도 로드 완료');
+                        this.setupMapEventListeners();
+                    });
+                    
+                    // 지도 로드 오류 처리
+                    this.map.on('loaderror', (error) => {
+                        console.error('지도 로드 오류:', error);
+                        this.handleMapLoadError();
+                    });
+                } else {
+                    console.log('지도 이벤트 리스너 설정 불가, 기본 이벤트 리스너 사용');
+                    this.setupMapEventListeners();
+                }
+                
+            } catch (mapError) {
+                console.error('지도 생성 중 오류:', mapError);
+                this.handleMapLoadError();
+            }
+            
+        } catch (error) {
+            console.error('지도 초기화 오류:', error);
+            this.handleMapLoadError();
+        }
+    }
+
+    // 지도 로드 실패 시 대체 방법
+    handleMapLoadError() {
+        console.log('VWorld API 로드 실패, 대체 방법 시도...');
+        
+        // 지도 컨테이너에 기본 지도 이미지 표시
+        const mapContainer = document.getElementById('vmap');
+        if (mapContainer) {
+            mapContainer.innerHTML = `
+                <div style="
+                    width: 100%; 
+                    height: 100%; 
+                    background: linear-gradient(45deg, #f0f0f0, #e0e0e0);
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: center;
+                    border-radius: 15px;
+                    color: #666;
+                    font-size: 1.2rem;
+                    text-align: center;
+                ">
+                    <div>
+                        <div style="font-size: 3rem; margin-bottom: 10px;">🗺️</div>
+                        <div>지도 로드 중...</div>
+                        <div style="font-size: 0.9rem; margin-top: 10px;">잠시 후 새로고침해주세요</div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // 3초 후 다시 시도
+        setTimeout(() => {
+            console.log('지도 재시도 중...');
+            this.initializeMap();
+        }, 3000);
+    }
+
+    setupMapEventListeners() {
+        // 지도 클릭 이벤트
+        this.map.on('click', (e) => {
+            this.handleMapClick(e);
+        });
     }
 
     initializeEventListeners() {
@@ -21,9 +127,6 @@ class RandomTravelPicker {
         document.getElementById('favoriteBtn').addEventListener('click', () => this.addToFavorites());
         document.getElementById('shareBtn').addEventListener('click', () => this.shareLocation());
         document.getElementById('saveBtn').addEventListener('click', () => this.saveLocation());
-        
-        // 지도 클릭으로도 위치 선택 가능
-        this.map.addEventListener('click', (e) => this.handleMapClick(e));
     }
 
     async initializeRegions() {
@@ -278,15 +381,25 @@ class RandomTravelPicker {
             y: randomY
         };
 
+        // VWorld API 마커 표시
+        this.showVWorldMarker(randomX, randomY, randomRegion.name);
         this.showPin(randomX, randomY);
         this.showResult(randomRegion);
         this.showFavoriteButton();
     }
 
     handleMapClick(e) {
-        const rect = this.map.getBoundingClientRect();
-        const x = ((e.clientX - rect.left) / rect.width) * 100;
-        const y = ((e.clientY - rect.top) / rect.height) * 100;
+        if (!this.map) return;
+        
+        // 지도 API의 좌표를 픽셀 좌표로 변환
+        const pixel = this.map.getEventPixel(e.originalEvent);
+        const coordinate = this.map.getCoordinateFromPixel(pixel);
+        
+        // 좌표를 지도 컨테이너 기준 퍼센트로 변환
+        const mapContainer = document.getElementById('vmap');
+        const rect = mapContainer.getBoundingClientRect();
+        const x = ((e.originalEvent.clientX - rect.left) / rect.width) * 100;
+        const y = ((e.originalEvent.clientY - rect.top) / rect.height) * 100;
         
         // 클릭한 위치에서 가장 가까운 지역 찾기
         const clickedRegion = this.findNearestRegion(x, y);
@@ -337,9 +450,10 @@ class RandomTravelPicker {
         this.pinLabel.classList.remove('hidden');
 
         // 지도 확대 효과
-        this.map.style.transform = 'scale(1.1)';
+        const mapContainer = document.getElementById('vmap');
+        mapContainer.style.transform = 'scale(1.1)';
         setTimeout(() => {
-            this.map.style.transform = 'scale(1)';
+            mapContainer.style.transform = 'scale(1)';
         }, 300);
     }
 
@@ -437,8 +551,15 @@ class RandomTravelPicker {
         document.getElementById('favoriteBtn').classList.add('hidden');
         this.currentLocation = null;
         
+        // VWorld 마커 제거
+        if (this.tempMarker) {
+            this.map.removeOverlay(this.tempMarker);
+            this.tempMarker = null;
+        }
+        
         // 지도 원래 크기로
-        this.map.style.transform = 'scale(1)';
+        const mapContainer = document.getElementById('vmap');
+        mapContainer.style.transform = 'scale(1)';
     }
 
     shareLocation() {
@@ -479,6 +600,166 @@ class RandomTravelPicker {
         URL.revokeObjectURL(url);
         
         alert(`${this.currentLocation.name} 여행지 정보가 저장되었습니다!`);
+    }
+
+    // VWorld 경로 그리기 관련 함수들
+    jsCreatRoute(mapName) {
+        if (!this.map) return;
+        
+        if (mapName === 'route1') {
+            this.routeMap1 = new vw.ol3.control.RouteMap(this.map, mapName, null, "//map.vworld.kr/images/maps/marker.png");
+            this.routeMap1.setFunction(this.mClick1.bind(this));
+        } else {
+            this.routeMap2 = new vw.ol3.control.RouteMap(this.map, mapName, null, "//map.vworld.kr/images/maps/marker.png");
+            this.routeMap2.setFunction(this.mClick2.bind(this));
+        }
+    }
+
+    jsAddRouteEvent(mapName) {
+        if (mapName === 'route1' && this.routeMap1) {
+            this.routeMap1.start();
+        } else if (mapName === 'route2' && this.routeMap2) {
+            this.routeMap2.start();
+        }
+    }
+
+    mClick1(event) {
+        if (!this.routeMap1) return;
+        
+        const coordinate = this.routeMap1.coordinate_;
+        if (coordinate != null) {
+            this.routeMap1.addRoute(this.routeMap1.mapName, "route1", "route1 sample", coordinate);
+        }
+    }
+
+    mClick2(event) {
+        if (!this.routeMap2) return;
+        
+        const coordinate = this.routeMap2.coordinate_;
+        if (coordinate != null) {
+            this.routeMap2.addRoute(this.routeMap2.mapName, "route2", "route2 sample", coordinate);
+        }
+    }
+
+    jsInit(mapName) {
+        if (mapName === 'route1' && this.routeMap1) {
+            this.routeMap1.stop();
+        } else if (mapName === 'route2' && this.routeMap2) {
+            this.routeMap2.stop();
+        }
+    }
+
+    setColor(mapName) {
+        if (mapName === 'route1' && this.routeMap1) {
+            this.routeMap1.setColor(mapName, "#990033");
+        } else if (mapName === 'route2' && this.routeMap2) {
+            this.routeMap2.setColor(mapName, "#990033");
+        }
+    }
+
+    setWidth(mapName) {
+        if (mapName === 'route1' && this.routeMap1) {
+            this.routeMap1.setWidth(mapName, 20);
+        } else if (mapName === 'route2' && this.routeMap2) {
+            this.routeMap2.setWidth(mapName, 20);
+        }
+    }
+
+    jsRemoveRoute(mapName) {
+        if (mapName === 'route1' && this.routeMap1) {
+            this.routeMap1.removeRouteMap(mapName);
+            this.routeMap1 = null;
+        } else if (mapName === 'route2' && this.routeMap2) {
+            this.routeMap2.removeRouteMap(mapName);
+            this.routeMap2 = null;
+        }
+    }
+
+    closeAllPop(mapName) {
+        if (mapName === 'route1' && this.routeMap1) {
+            this.routeMap1.closeAllPop();
+        } else if (mapName === 'route2' && this.routeMap2) {
+            this.routeMap2.closeAllPop();
+        }
+    }
+
+    openAllPop(mapName) {
+        if (mapName === 'route1' && this.routeMap1) {
+            this.routeMap1.openAllPop();
+        } else if (mapName === 'route2' && this.routeMap2) {
+            this.routeMap2.openAllPop();
+        }
+    }
+
+    // VWorld 마커 표시 함수
+    showVWorldMarker(x, y, locationName) {
+        if (!this.map) {
+            console.log('지도가 로드되지 않아 마커를 표시할 수 없습니다.');
+            return;
+        }
+        
+        try {
+            // 기존 마커 제거
+            if (this.tempMarker) {
+                this.map.removeOverlay(this.tempMarker);
+            }
+            
+            // 좌표를 지도 컨테이너 기준 퍼센트로 변환
+            const mapContainer = document.getElementById('vmap');
+            const rect = mapContainer.getBoundingClientRect();
+            const pixelX = (x / 100) * rect.width;
+            const pixelY = (y / 100) * rect.height;
+            
+            // VWorld 마커 생성
+            const markerElement = document.createElement('div');
+            markerElement.innerHTML = `
+                <div style="
+                    background: #ff6b6b;
+                    color: white;
+                    padding: 8px 12px;
+                    border-radius: 20px;
+                    font-size: 12px;
+                    font-weight: bold;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+                    white-space: nowrap;
+                    cursor: pointer;
+                ">
+                    📍 ${locationName}
+                </div>
+            `;
+            
+            // 마커 클릭 이벤트
+            markerElement.addEventListener('click', () => {
+                // 해당 위치로 지도 이동 및 확대
+                if (this.map && typeof this.map.getView === 'function') {
+                    try {
+                        const view = this.map.getView();
+                        if (view && typeof view.animate === 'function') {
+                            view.animate({
+                                center: [pixelX, pixelY],
+                                zoom: 8,
+                                duration: 1000
+                            });
+                        }
+                    } catch (error) {
+                        console.log('지도 이동 실패:', error);
+                    }
+                }
+            });
+            
+            // 마커를 지도에 추가
+            this.tempMarker = new ol.Overlay({
+                element: markerElement,
+                position: [pixelX, pixelY],
+                positioning: 'center-center'
+            });
+            
+            this.map.addOverlay(this.tempMarker);
+            console.log('VWorld 마커 추가 완료:', locationName);
+            
+        } catch (error) {
+            console.error('VWorld 마커 생성 오류:', error);
+        }
     }
 }
 

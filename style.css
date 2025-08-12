@@ -1,3 +1,4 @@
+/* 기본 스타일 */
 * {
     margin: 0;
     padding: 0;
@@ -25,124 +26,54 @@ header {
 
 header h1 {
     font-size: 2.5rem;
-    font-weight: 700;
     margin-bottom: 10px;
     text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
 }
 
 header p {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     opacity: 0.9;
 }
 
-.main-content {
+/* 지도 컨테이너 */
+.map-container {
     background: white;
     border-radius: 20px;
-    padding: 30px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-}
-
-.map-container {
+    padding: 20px;
     margin-bottom: 30px;
-}
-
-.map-wrapper {
-    position: relative;
-    display: inline-block;
-    border-radius: 15px;
-    overflow: hidden;
     box-shadow: 0 10px 30px rgba(0,0,0,0.2);
 }
 
-#koreaMap {
-    max-width: 100%;
-    height: auto;
-    display: block;
-    transition: transform 0.3s ease;
+#vmap {
+    width: 100%;
+    height: 370px;
+    border-radius: 15px;
+    overflow: hidden;
 }
 
-.pin {
-    position: absolute;
-    width: 30px;
-    height: 30px;
-    background: #ff4757;
-    border-radius: 50% 50% 50% 0;
-    transform: rotate(-45deg);
-    box-shadow: 0 5px 15px rgba(255, 71, 87, 0.4);
-    animation: pinDrop 0.6s ease-out;
-    z-index: 10;
-}
-
-.pin::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 12px;
-    height: 12px;
-    background: white;
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-}
-
-.pin-label {
-    position: absolute;
-    background: rgba(0,0,0,0.8);
-    color: white;
-    padding: 8px 12px;
-    border-radius: 20px;
-    font-size: 0.9rem;
-    white-space: nowrap;
-    z-index: 11;
-    transform: translateY(-40px);
-    animation: labelFadeIn 0.5s ease-out 0.3s both;
-}
-
-@keyframes pinDrop {
-    0% {
-        transform: rotate(-45deg) scale(0) translateY(-50px);
-        opacity: 0;
-    }
-    50% {
-        transform: rotate(-45deg) scale(1.2) translateY(0);
-    }
-    100% {
-        transform: rotate(-45deg) scale(1) translateY(0);
-        opacity: 1;
-    }
-}
-
-@keyframes labelFadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-40px) scale(0.8);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(-40px) scale(1);
-    }
-}
-
+/* 컨트롤 버튼들 */
 .controls {
-    text-align: center;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
     margin-bottom: 30px;
+    flex-wrap: wrap;
 }
 
 .btn {
-    padding: 15px 30px;
-    margin: 0 10px;
+    padding: 12px 24px;
     border: none;
-    border-radius: 50px;
-    font-size: 1.1rem;
+    border-radius: 25px;
+    font-size: 1rem;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
 
 .btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
 }
 
 .btn.primary {
@@ -161,41 +92,70 @@ header p {
 }
 
 .btn.small {
-    padding: 10px 20px;
+    padding: 8px 16px;
     font-size: 0.9rem;
-    margin: 5px;
 }
 
 .btn.hidden {
     display: none;
 }
 
-.result-card {
-    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-    border-radius: 15px;
+/* 경로 그리기 컨트롤 */
+.route-controls {
+    background: white;
+    border-radius: 20px;
     padding: 25px;
     margin-bottom: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.route-controls h3 {
+    color: #0984e3;
+    margin-bottom: 20px;
+    font-size: 1.3rem;
     text-align: center;
-    border-left: 5px solid #ff6b6b;
+}
+
+.route-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+}
+
+.route-buttons .btn {
+    min-width: 120px;
+    margin: 2px;
+}
+
+/* 결과 카드 */
+.result-card {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    text-align: center;
 }
 
 .result-card h3 {
-    color: #ff6b6b;
+    color: #00b894;
     margin-bottom: 20px;
-    font-size: 1.4rem;
+    font-size: 1.5rem;
 }
 
 #locationName {
-    font-size: 1.3rem;
-    font-weight: 600;
+    font-size: 2rem;
+    font-weight: 700;
     color: #2d3436;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
 }
 
 #locationDescription {
+    font-size: 1.1rem;
     color: #636e72;
-    margin-bottom: 20px;
-    line-height: 1.6;
+    margin-bottom: 25px;
 }
 
 .action-buttons {
@@ -205,64 +165,77 @@ header p {
     flex-wrap: wrap;
 }
 
-.favorites-list {
-    background: #f8f9fa;
-    border-radius: 15px;
-    padding: 25px;
+/* 저장된 정보 영역 */
+.saved-info {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
 }
 
-.favorites-list h3 {
-    color: #e84393;
-    margin-bottom: 20px;
+.saved-info h3 {
+    color: #00b894;
+    margin-bottom: 25px;
+    font-size: 1.5rem;
     text-align: center;
 }
 
-#favoritesContainer {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 15px;
+.route-info, .favorites-list {
+    margin-bottom: 30px;
+}
+
+.route-info h4, .favorites-list h4 {
+    color: #0984e3;
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+}
+
+#routeDetails {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 15px;
+    border-left: 4px solid #0984e3;
+}
+
+#routeDetails p {
+    margin-bottom: 8px;
+    color: #2d3436;
 }
 
 .favorite-item {
-    background: white;
-    border-radius: 10px;
-    padding: 15px;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-    transition: transform 0.2s ease;
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 15px;
+    border-left: 4px solid #fd79a8;
 }
 
-.favorite-item:hover {
-    transform: translateY(-2px);
-}
-
-.favorite-item h4 {
+.favorite-item h5 {
     color: #2d3436;
     margin-bottom: 8px;
+    font-size: 1.1rem;
 }
 
 .favorite-item p {
     color: #636e72;
-    font-size: 0.9rem;
     margin-bottom: 10px;
+    font-size: 0.9rem;
 }
 
-.favorite-item .remove-btn {
-    background: #ff4757;
+.remove-btn {
+    background: #ff6b6b;
     color: white;
     border: none;
-    padding: 5px 10px;
+    padding: 6px 12px;
     border-radius: 15px;
     font-size: 0.8rem;
     cursor: pointer;
-    transition: background 0.2s ease;
+    transition: background 0.3s ease;
 }
 
-.favorite-item .remove-btn:hover {
-    background: #c44569;
-}
-
-.hidden {
-    display: none !important;
+.remove-btn:hover {
+    background: #ee5a24;
 }
 
 /* 반응형 디자인 */
@@ -275,186 +248,38 @@ header p {
         font-size: 2rem;
     }
     
-    header p {
-        font-size: 1rem;
-    }
-    
-    .main-content {
-        padding: 20px;
-        border-radius: 15px;
+    .controls {
+        flex-direction: column;
+        align-items: center;
     }
     
     .btn {
-        padding: 12px 24px;
-        font-size: 1rem;
-        margin: 5px;
         width: 100%;
         max-width: 300px;
     }
     
-    .controls {
-        display: flex;
+    .route-buttons {
         flex-direction: column;
         align-items: center;
-        gap: 10px;
+    }
+    
+    .route-buttons .btn {
+        width: 100%;
+        max-width: 200px;
     }
     
     .action-buttons {
         flex-direction: column;
         align-items: center;
-        width: 100%;
     }
     
     .action-buttons .btn {
         width: 100%;
-        max-width: 250px;
-    }
-    
-    #favoritesContainer {
-        grid-template-columns: 1fr;
-    }
-    
-    .map-wrapper {
-        border-radius: 10px;
-    }
-    
-    .pin {
-        width: 25px;
-        height: 25px;
-    }
-    
-    .pin::after {
-        width: 10px;
-        height: 10px;
-    }
-    
-    .pin-label {
-        font-size: 0.8rem;
-        padding: 6px 10px;
-    }
-    
-    .result-card {
-        padding: 20px;
-        margin-bottom: 20px;
-    }
-    
-    .result-card h3 {
-        font-size: 1.2rem;
-    }
-    
-    #locationName {
-        font-size: 1.1rem;
-    }
-    
-    .favorites-list {
-        padding: 20px;
-    }
-    
-    .favorites-list h3 {
-        font-size: 1.2rem;
+        max-width: 200px;
     }
 }
 
-/* 모바일 세로 모드 최적화 */
-@media (max-width: 480px) {
-    .container {
-        padding: 10px;
-    }
-    
-    header h1 {
-        font-size: 1.8rem;
-        margin-bottom: 8px;
-    }
-    
-    header p {
-        font-size: 0.9rem;
-    }
-    
-    .main-content {
-        padding: 15px;
-        border-radius: 10px;
-    }
-    
-    .btn {
-        padding: 10px 20px;
-        font-size: 0.9rem;
-        margin: 3px;
-    }
-    
-    .map-container {
-        margin-bottom: 20px;
-    }
-    
-
-    
-    .controls {
-        margin-bottom: 20px;
-    }
-    
-    .result-card {
-        padding: 15px;
-    }
-    
-    .favorites-list {
-        padding: 15px;
-    }
-    
-    .favorite-item {
-        padding: 12px;
-    }
-}
-
-/* 태블릿 최적화 */
-@media (min-width: 769px) and (max-width: 1024px) {
-    .container {
-        max-width: 900px;
-        padding: 25px;
-    }
-    
-    header h1 {
-        font-size: 2.2rem;
-    }
-    
-    .btn {
-        padding: 14px 28px;
-        font-size: 1.05rem;
-    }
-    
-    #favoritesContainer {
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    }
-    
-
-}
-
-/* 터치 디바이스 최적화 */
-@media (hover: none) and (pointer: coarse) {
-    .btn:hover {
-        transform: none;
-    }
-    
-    .favorite-item:hover {
-        transform: none;
-    }
-    
-    .pin-label {
-        font-size: 0.85rem;
-        padding: 6px 10px;
-    }
-}
-
-/* 로딩 애니메이션 */
-.loading {
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    border: 3px solid #f3f3f3;
-    border-top: 3px solid #ff6b6b;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+/* 숨김 클래스 */
+.hidden {
+    display: none !important;
 }
