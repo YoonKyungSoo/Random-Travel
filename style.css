@@ -165,6 +165,22 @@ header p {
     flex-wrap: wrap;
 }
 
+/* 즐겨찾기 목록 영역 */
+.favorites-section {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.favorites-section h3 {
+    color: #fd79a8;
+    margin-bottom: 35px;
+    font-size: 1.5rem;
+    text-align: center;
+}
+
 /* 저장된 정보 영역 */
 .saved-info {
     background: white;
@@ -205,10 +221,11 @@ header p {
 
 .favorite-item {
     background: #f8f9fa;
-    padding: 20px;
+    padding: 25px;
     border-radius: 15px;
-    margin-bottom: 15px;
+    margin-bottom: 25px;
     border-left: 4px solid #fd79a8;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 .favorite-item h5 {
