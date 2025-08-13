@@ -123,12 +123,15 @@ function addToFavorites(location) {
     
     alert(`${location.name}이(가) 즐겨찾기에 추가되었습니다!`);
     
-    // index.html의 loadFavorites 함수 호출
+    // 메인 리스트와 팝업 리스트 모두 업데이트
     if (typeof window.loadFavorites === 'function') {
         window.loadFavorites();
     } else {
         updateFavoritesList();
     }
+    
+    // 팝업이 열려있다면 팝업 내용도 업데이트
+    updatePopupFavoritesList();
 }
 
 // 즐겨찾기 목록 업데이트
@@ -265,12 +268,15 @@ function removeFavorite(index) {
         favorites.splice(index, 1);
         localStorage.setItem('travelFavorites', JSON.stringify(favorites));
         
-        // index.html의 loadFavorites 함수 호출
+        // 메인 리스트와 팝업 리스트 모두 업데이트
         if (typeof window.loadFavorites === 'function') {
             window.loadFavorites();
         } else {
             updateFavoritesList();
         }
+        
+        // 팝업이 열려있다면 팝업 내용도 업데이트
+        updatePopupFavoritesList();
     }
 }
 
@@ -278,7 +284,20 @@ function removeFavorite(index) {
 function removeFavoriteById(id) {
     const index = favorites.findIndex(fav => fav.id === id);
     if (index !== -1) {
-        removeFavorite(index);
+        if (confirm('정말로 이 지역을 즐겨찾기에서 제거하시겠습니까?')) {
+            favorites.splice(index, 1);
+            localStorage.setItem('travelFavorites', JSON.stringify(favorites));
+            
+            // 메인 리스트와 팝업 리스트 모두 업데이트
+            if (typeof window.loadFavorites === 'function') {
+                window.loadFavorites();
+            } else {
+                updateFavoritesList();
+            }
+            
+            // 팝업이 열려있다면 팝업 내용도 업데이트
+            updatePopupFavoritesList();
+        }
     }
 }
 
