@@ -67,11 +67,17 @@ function pickRandomLocation() {
     // 결과 카드 표시
     showResultCard(selectedLocation);
     
-    // 즐겨찾기 버튼 표시
+    // 즐겨찾기 버튼 표시 (데스크톱용)
     document.getElementById('favoriteBtn').classList.remove('hidden');
     
     // 즐겨찾기 버튼에 현재 위치 정보 저장
     document.getElementById('favoriteBtn').onclick = () => addToFavorites(selectedLocation);
+    
+    // 모바일에서도 즐겨찾기 버튼 활성화 (즐겨찾기 추가 기능)
+    const favoriteBtnMobile = document.getElementById('favoriteBtnMobile');
+    if (favoriteBtnMobile) {
+        favoriteBtnMobile.onclick = () => addToFavorites(selectedLocation);
+    }
 }
 
 // 결과 카드 표시
@@ -87,6 +93,12 @@ function showResultCard(location) {
     
     // 즐겨찾기 버튼에 현재 위치 정보 저장
     document.getElementById('favoriteBtn').onclick = () => addToFavorites(location);
+    
+    // 모바일에서도 즐겨찾기 버튼 활성화 (즐겨찾기 추가 기능)
+    const favoriteBtnMobile = document.getElementById('favoriteBtnMobile');
+    if (favoriteBtnMobile) {
+        favoriteBtnMobile.onclick = () => addToFavorites(location);
+    }
 }
 
 // 즐겨찾기에 추가
@@ -139,11 +151,87 @@ function updateFavoritesList() {
                 <h5 style="margin: 0 0 10px 0; color: #333;">${favorite.name}</h5>
                 ${favorite.description ? `<p style="margin: 5px 0; color: #666; font-size: 14px;">${favorite.description}</p>` : ''}
                 <p style="margin: 5px 0; color: #888; font-size: 12px;">추가된 날짜: ${new Date(favorite.timestamp || favorite.addedAt).toLocaleDateString('ko-KR')}</p>
-                <button onclick="removeFavoriteById(${favorite.id || index})" class="btn small" style="background: #ff6b6b; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">삭제</button>
+                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                    <button onclick="showLocationOnMap(${favorite.lat}, ${favorite.lng}, '${favorite.name}')" class="btn small" style="background: #74b9ff; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">📍 위치보기</button>
+                    <button onclick="removeFavoriteById(${favorite.id || index})" class="btn small" style="background: #ff6b6b; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">삭제</button>
+                </div>
             </div>
         `;
         container.appendChild(favoriteItem);
     });
+}
+
+// 팝업용 즐겨찾기 목록 업데이트
+function updatePopupFavoritesList() {
+    const container = document.getElementById('popupFavoritesContainer');
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    if (favorites.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">아직 즐겨찾기한 여행지가 없습니다.</p>';
+        return;
+    }
+    
+    favorites.forEach((favorite, index) => {
+        const favoriteItem = document.createElement('div');
+        favoriteItem.className = 'popup-favorite-item';
+        favoriteItem.innerHTML = `
+            <h5>${favorite.name}</h5>
+            ${favorite.description ? `<p>${favorite.description}</p>` : ''}
+            <p style="color: #888; font-size: 12px;">추가된 날짜: ${new Date(favorite.timestamp || favorite.addedAt).toLocaleDateString('ko-KR')}</p>
+            <div class="popup-actions">
+                <button onclick="showLocationOnMap(${favorite.lat}, ${favorite.lng}, '${favorite.name}')" class="btn primary">📍 위치보기</button>
+                <button onclick="removeFavoriteById(${favorite.id || index})" class="btn small" style="background: #ff6b6b; color: white;">삭제</button>
+            </div>
+        `;
+        container.appendChild(favoriteItem);
+    });
+}
+
+// 지도에서 위치 표시 (팝업 닫기 포함)
+function showLocationOnMap(lat, lng, name) {
+    // 팝업이 열려있다면 닫기
+    const popup = document.getElementById('favoritesPopup');
+    if (popup && popup.classList.contains('show')) {
+        closeFavoritesPopup();
+    }
+    
+    // 지도에서 위치 표시
+    const position = new kakao.maps.LatLng(lat, lng);
+    window.map.setCenter(position);
+    window.map.setLevel(6);
+    
+    // 기존 마커 제거
+    if (tempMarker) {
+        tempMarker.setMap(null);
+    }
+    
+    // 새 마커 생성
+    tempMarker = new kakao.maps.Marker({
+        position: position,
+        map: window.map
+    });
+    
+    // 인포윈도우 생성
+    const infowindow = new kakao.maps.InfoWindow({
+        content: `<div style="padding:10px;text-align:center;"><strong>${name}</strong></div>`
+    });
+    
+    infowindow.open(window.map, tempMarker);
+}
+
+// 즐겨찾기 팝업 열기
+function openFavoritesPopup() {
+    updatePopupFavoritesList();
+    const popup = document.getElementById('favoritesPopup');
+    popup.classList.add('show');
+}
+
+// 즐겨찾기 팝업 닫기
+function closeFavoritesPopup() {
+    const popup = document.getElementById('favoritesPopup');
+    popup.classList.remove('show');
 }
 
 // 지도에서 위치 표시
@@ -239,6 +327,12 @@ function resetMap() {
     document.getElementById('resultCard').classList.add('hidden');
     document.getElementById('favoriteBtn').classList.add('hidden');
     
+    // 모바일 즐겨찾기 버튼도 리셋 (즐겨찾기 추가 기능으로)
+    const favoriteBtnMobile = document.getElementById('favoriteBtnMobile');
+    if (favoriteBtnMobile) {
+        favoriteBtnMobile.onclick = () => openFavoritesPopup();
+    }
+    
     // 지도 중심을 한국으로 이동
     window.map.setCenter(new kakao.maps.LatLng(36.5, 127.5));
     window.map.setLevel(7);
@@ -278,6 +372,9 @@ window.addToFavorites = addToFavorites;
 window.resetMap = resetMap;
 window.initializeMap = initializeMap;
 window.updateFavoritesList = updateFavoritesList;
+window.openFavoritesPopup = openFavoritesPopup;
+window.closeFavoritesPopup = closeFavoritesPopup;
+window.showLocationOnMap = showLocationOnMap;
 
 // 카카오맵 초기화
 function initializeMap() {
@@ -318,11 +415,25 @@ function initializeMap() {
 
 // 이벤트 리스너 등록
 document.addEventListener('DOMContentLoaded', function() {
-    // 랜덤 픽 버튼
+    // 데스크톱용 버튼들
     document.getElementById('randomPickBtn').addEventListener('click', pickRandomLocation);
-    
-    // 다시하기 버튼
     document.getElementById('resetBtn').addEventListener('click', resetMap);
+    document.getElementById('favoriteBtn').addEventListener('click', openFavoritesPopup);
+    
+    // 모바일용 버튼들
+    document.getElementById('randomPickBtnMobile').addEventListener('click', pickRandomLocation);
+    document.getElementById('favoritesListBtnMobile').addEventListener('click', openFavoritesPopup);
+    document.getElementById('favoriteBtnMobile').addEventListener('click', openFavoritesPopup);
+    
+    // 팝업 닫기 버튼
+    document.getElementById('closePopupBtn').addEventListener('click', closeFavoritesPopup);
+    
+    // 팝업 배경 클릭 시 닫기
+    document.getElementById('favoritesPopup').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeFavoritesPopup();
+        }
+    });
     
     // 경로 설정 버튼들
     const routeButtons = document.querySelectorAll('.route-buttons button');
