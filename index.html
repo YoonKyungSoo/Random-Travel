@@ -27,9 +27,16 @@
 
             <!-- 기본 컨트롤 버튼들 -->
             <div class="controls">
-                <button id="randomPickBtn" class="btn primary">🎯 랜덤 여행지 픽!</button>
-                <button id="resetBtn" class="btn secondary">🔄 다시하기</button>
-                <button id="favoriteBtn" class="btn accent hidden">❤️ 즐겨찾기</button>
+                <div class="desktop-controls">
+                    <button id="randomPickBtn" class="btn primary">🎯 랜덤 여행지 픽!</button>
+                    <button id="resetBtn" class="btn secondary">🔄 다시하기</button>
+                    <button id="favoriteBtn" class="btn accent hidden">❤️ 즐겨찾기</button>
+                </div>
+                <div class="mobile-controls">
+                    <button id="randomPickBtnMobile" class="btn primary">🎯 랜덤픽!</button>
+                    <button id="favoriteBtnMobile" class="btn accent">❤️ 즐겨찾기</button>
+                    <button id="favoritesListBtnMobile" class="btn secondary">📋 찜 리스트</button>
+                </div>
             </div>
 
             <!-- 결과 표시 영역 -->
@@ -48,6 +55,19 @@
         <div id="favoritesSection" class="favorites-section">
             <h3>❤️ 즐겨찾기한 여행지</h3>
             <div id="favoritesContainer"></div>
+        </div>
+        
+        <!-- 즐겨찾기 팝업 -->
+        <div id="favoritesPopup" class="favorites-popup">
+            <div class="popup-content">
+                <div class="popup-header">
+                    <h3>❤️ 즐겨찾기한 여행지</h3>
+                    <button id="closePopupBtn" class="close-btn">×</button>
+                </div>
+                <div class="popup-body">
+                    <div id="popupFavoritesContainer"></div>
+                </div>
+            </div>
         </div>
         </div>
     </div>
