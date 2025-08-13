@@ -81,9 +81,6 @@ window.gyeonggiLocations = [
     // 양평군
     { name: '양평군', description: '양평군청이 있는 지역', lat: 37.4910, lng: 127.4874, type: '군' },
     
-    // 고양군
-    { name: '고양군', description: '고양군청이 있는 지역', lat: 37.6584, lng: 126.8320, type: '군' },
-    
     // 연천군
     { name: '연천군', description: '연천군청이 있는 지역', lat: 38.0966, lng: 127.0747, type: '군' },
     

@@ -10,5 +10,8 @@ window.ulsanLocations = [
     { name: '동구', description: '울산 동구청이 있는 지역', lat: 35.5040, lng: 129.4160, type: '구' },
     
     // 북구
-    { name: '북구', description: '울산 북구청이 있는 지역', lat: 35.5820, lng: 129.3610, type: '구' }
+    { name: '북구', description: '울산 북구청이 있는 지역', lat: 35.5820, lng: 129.3610, type: '구' },
+    
+    // 울주군
+    { name: '울주군', description: '울산 울주군청이 있는 지역', lat: 35.5270, lng: 129.1210, type: '군' }
 ];
