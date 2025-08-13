@@ -258,14 +258,66 @@
                         return;
                     }
                     
-                    container.innerHTML = favorites.map(fav => `
-                        <div class="favorite-item" style="border: 1px solid #ddd; border-radius: 8px; padding: 15px; margin-bottom: 10px; background: #f9f9f9;">
-                            <h5 style="margin: 0 0 10px 0; color: #333;">${fav.name}</h5>
-                            ${fav.description ? `<p style="margin: 5px 0; color: #666; font-size: 14px;">${fav.description}</p>` : ''}
-                            <p style="margin: 5px 0; color: #888; font-size: 12px;">추가된 날짜: ${new Date(fav.timestamp).toLocaleDateString('ko-KR')}</p>
-                            <button onclick="removeFavorite(${fav.id})" class="btn small" style="background: #ff6b6b; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">삭제</button>
-                        </div>
-                    `).join('');
+                    // 무한 스크롤 방식으로 즐겨찾기 표시
+                    let currentLoadedCount = 0;
+                    const itemsPerPage = 5;
+                    
+                    function loadMoreFavorites(count) {
+                        const startIndex = currentLoadedCount;
+                        const endIndex = Math.min(startIndex + count, favorites.length);
+                        const itemsToLoad = favorites.slice(startIndex, endIndex);
+                        
+                        itemsToLoad.forEach((fav, index) => {
+                            const favoriteItem = document.createElement('div');
+                            favoriteItem.className = 'favorite-item';
+                            favoriteItem.innerHTML = `
+                                <div class="favorite-item" style="border: 1px solid #ddd; border-radius: 8px; padding: 15px; margin-bottom: 10px; background: #f9f9f9;">
+                                    <h5 style="margin: 0 0 10px 0; color: #333;">${fav.name}</h5>
+                                    ${fav.description ? `<p style="margin: 5px 0; color: #666; font-size: 14px;">${fav.description}</p>` : ''}
+                                    <p style="margin: 5px 0; color: #888; font-size: 12px;">추가된 날짜: ${new Date(fav.timestamp).toLocaleDateString('ko-KR')}</p>
+                                    <button onclick="removeFavorite(${fav.id})" class="btn small" style="background: #ff6b6b; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">삭제</button>
+                                </div>
+                            `;
+                            container.appendChild(favoriteItem);
+                        });
+                        
+                        currentLoadedCount = endIndex;
+                        
+
+                    }
+                    
+                    // 스크롤 이벤트 핸들러
+                    function handleFavoritesScroll(event) {
+                        const scrollTop = event.target.scrollTop;
+                        const scrollHeight = event.target.scrollHeight;
+                        const clientHeight = event.target.clientHeight;
+                        
+                        // 스크롤이 하단에 가까워지면 더 많은 항목 로드
+                        if (scrollTop + clientHeight >= scrollHeight - 50) {
+                            if (currentLoadedCount < favorites.length) {
+                                // 로딩 메시지 표시
+                                const existingLoading = document.querySelector('.loading-message');
+                                if (!existingLoading) {
+                                    const loadingMessage = document.createElement('div');
+                                    loadingMessage.className = 'loading-message';
+                                    loadingMessage.style.cssText = 'text-align: center; color: #666; padding: 15px; font-size: 14px; border-top: 1px solid #eee; margin-top: 10px;';
+                                    loadingMessage.innerHTML = '⏳ 더 많은 항목을 불러오는 중...';
+                                    container.appendChild(loadingMessage);
+                                }
+                                
+                                // 잠시 후 다음 항목들 로드
+                                setTimeout(() => {
+                                    loadMoreFavorites(itemsPerPage);
+                                }, 300);
+                            }
+                        }
+                    }
+                    
+                    // 초기 로드 (처음 5개)
+                    loadMoreFavorites(5);
+                    
+                    // 스크롤 이벤트 리스너 추가
+                    container.addEventListener('scroll', handleFavoritesScroll);
                 }
             } catch (error) {
                 console.error('즐겨찾기 로드 오류:', error);

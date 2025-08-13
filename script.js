@@ -123,15 +123,18 @@ function addToFavorites(location) {
     
     alert(`${location.name}이(가) 즐겨찾기에 추가되었습니다!`);
     
-    // 메인 리스트와 팝업 리스트 모두 업데이트
+    // 무한 스크롤 상태 리셋
+    currentLoadedCount = 0;
+    popupCurrentLoadedCount = 0;
+    
+    // PC 버전과 모바일 버전 모두 업데이트
+    updateFavoritesList(); // PC 버전 메인 목록 업데이트
+    updatePopupFavoritesList(); // 모바일 팝업 목록 업데이트
+    
+    // index.html의 loadFavorites 함수가 있다면 호출 (fallback)
     if (typeof window.loadFavorites === 'function') {
         window.loadFavorites();
-    } else {
-        updateFavoritesList();
     }
-    
-    // 팝업이 열려있다면 팝업 내용도 업데이트
-    updatePopupFavoritesList();
 }
 
 // 즐겨찾기 목록 업데이트
@@ -146,7 +149,29 @@ function updateFavoritesList() {
         return;
     }
     
-    favorites.forEach((favorite, index) => {
+    // 무한 스크롤을 위한 초기 로드 (처음 5개)
+    loadMoreFavorites(5);
+    
+    // 스크롤 이벤트 리스너 추가
+    container.addEventListener('scroll', handleFavoritesScroll);
+}
+
+// 즐겨찾기 무한 스크롤 처리
+let currentLoadedCount = 0;
+const itemsPerPage = 5;
+
+function loadMoreFavorites(count) {
+    const container = document.getElementById('favoritesContainer');
+    if (!container) return;
+    
+    // 최신순으로 정렬
+    const sortedFavorites = [...favorites].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+    
+    const startIndex = currentLoadedCount;
+    const endIndex = Math.min(startIndex + count, sortedFavorites.length);
+    const itemsToLoad = sortedFavorites.slice(startIndex, endIndex);
+    
+    itemsToLoad.forEach((favorite, index) => {
         const favoriteItem = document.createElement('div');
         favoriteItem.className = 'favorite-item';
         favoriteItem.innerHTML = `
@@ -156,18 +181,43 @@ function updateFavoritesList() {
                 <p style="margin: 5px 0; color: #888; font-size: 12px;">추가된 날짜: ${new Date(favorite.timestamp || favorite.addedAt).toLocaleDateString('ko-KR')}</p>
                 <div style="display: flex; gap: 10px; margin-top: 10px;">
                     <button onclick="showLocationOnMap(${favorite.lat}, ${favorite.lng}, '${favorite.name}')" class="btn small" style="background: #74b9ff; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">📍 위치보기</button>
-                    <button onclick="removeFavoriteById(${favorite.id || index})" class="btn small" style="background: #ff6b6b; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">삭제</button>
+                    <button onclick="removeFavoriteById(${favorite.id || (startIndex + index)})" class="btn small" style="background: #ff6b6b; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">삭제</button>
                 </div>
             </div>
         `;
         container.appendChild(favoriteItem);
     });
+    
+    currentLoadedCount = endIndex;
+    
+
+}
+
+// 스크롤 이벤트 핸들러
+function handleFavoritesScroll(event) {
+    const container = event.target;
+    const scrollTop = container.scrollTop;
+    const scrollHeight = container.scrollHeight;
+    const clientHeight = container.clientHeight;
+    
+    // 스크롤이 하단에 가까워지면 더 많은 항목 로드
+    if (scrollTop + clientHeight >= scrollHeight - 50) {
+        if (currentLoadedCount < favorites.length) {
+            // 잠시 후 다음 항목들 로드
+            setTimeout(() => {
+                loadMoreFavorites(itemsPerPage);
+            }, 300);
+        }
+    }
 }
 
 // 팝업용 즐겨찾기 목록 업데이트
 function updatePopupFavoritesList() {
     const container = document.getElementById('popupFavoritesContainer');
     if (!container) return;
+    
+    // 기존 스크롤 이벤트 리스너 제거
+    container.removeEventListener('scroll', handlePopupFavoritesScroll);
     
     container.innerHTML = '';
     
@@ -176,7 +226,32 @@ function updatePopupFavoritesList() {
         return;
     }
     
-    favorites.forEach((favorite, index) => {
+    // 무한 스크롤 상태 리셋
+    popupCurrentLoadedCount = 0;
+    
+    // 무한 스크롤을 위한 초기 로드 (처음 5개)
+    loadMorePopupFavorites(5);
+    
+    // 스크롤 이벤트 리스너 추가
+    container.addEventListener('scroll', handlePopupFavoritesScroll);
+}
+
+// 팝업용 즐겨찾기 무한 스크롤 처리
+let popupCurrentLoadedCount = 0;
+const popupItemsPerPage = 5;
+
+function loadMorePopupFavorites(count) {
+    const container = document.getElementById('popupFavoritesContainer');
+    if (!container) return;
+    
+    // 최신순으로 정렬
+    const sortedFavorites = [...favorites].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+    
+    const startIndex = popupCurrentLoadedCount;
+    const endIndex = Math.min(startIndex + count, sortedFavorites.length);
+    const itemsToLoad = sortedFavorites.slice(startIndex, endIndex);
+    
+    itemsToLoad.forEach((favorite, index) => {
         const favoriteItem = document.createElement('div');
         favoriteItem.className = 'popup-favorite-item';
         favoriteItem.innerHTML = `
@@ -185,11 +260,31 @@ function updatePopupFavoritesList() {
             <p style="color: #888; font-size: 12px;">추가된 날짜: ${new Date(favorite.timestamp || favorite.addedAt).toLocaleDateString('ko-KR')}</p>
             <div class="popup-actions">
                 <button onclick="showLocationOnMap(${favorite.lat}, ${favorite.lng}, '${favorite.name}')" class="btn primary">📍 위치보기</button>
-                <button onclick="removeFavoriteById(${favorite.id || index})" class="btn small" style="background: #ff6b6b; color: white;">삭제</button>
+                <button onclick="removeFavoriteById(${favorite.id || (startIndex + index)})" class="btn small" style="background: #ff6b6b; color: white;">삭제</button>
             </div>
         `;
         container.appendChild(favoriteItem);
     });
+    
+    popupCurrentLoadedCount = endIndex;
+}
+
+// 팝업용 스크롤 이벤트 핸들러
+function handlePopupFavoritesScroll(event) {
+    const container = event.target;
+    const scrollTop = container.scrollTop;
+    const scrollHeight = container.scrollHeight;
+    const clientHeight = container.clientHeight;
+    
+    // 스크롤이 하단에 가까워지면 더 많은 항목 로드
+    if (scrollTop + clientHeight >= scrollHeight - 50) {
+        if (popupCurrentLoadedCount < favorites.length) {
+            // 잠시 후 다음 항목들 로드
+            setTimeout(() => {
+                loadMorePopupFavorites(popupItemsPerPage);
+            }, 300);
+        }
+    }
 }
 
 // 지도에서 위치 표시 (팝업 닫기 포함)
@@ -224,11 +319,21 @@ function showLocationOnMap(lat, lng, name) {
     infowindow.open(window.map, tempMarker);
 }
 
-// 즐겨찾기 팝업 열기
+// 즐겨찾기 팝업 열기 (모바일 전용)
 function openFavoritesPopup() {
+    // 팝업 열기 전에 최신 즐겨찾기 목록으로 업데이트
     updatePopupFavoritesList();
+    
+    // 팝업 표시
     const popup = document.getElementById('favoritesPopup');
-    popup.classList.add('show');
+    if (popup) {
+        popup.classList.add('show');
+    }
+}
+
+// PC 버전 즐겨찾기 목록 표시 (팝업 없이)
+function showFavoritesList() {
+    updateFavoritesList();
 }
 
 // 즐겨찾기 팝업 닫기
@@ -287,6 +392,10 @@ function removeFavoriteById(id) {
         if (confirm('정말로 이 지역을 즐겨찾기에서 제거하시겠습니까?')) {
             favorites.splice(index, 1);
             localStorage.setItem('travelFavorites', JSON.stringify(favorites));
+            
+            // 무한 스크롤 상태 리셋
+            currentLoadedCount = 0;
+            popupCurrentLoadedCount = 0;
             
             // 메인 리스트와 팝업 리스트 모두 업데이트
             if (typeof window.loadFavorites === 'function') {
@@ -391,6 +500,7 @@ window.addToFavorites = addToFavorites;
 window.resetMap = resetMap;
 window.initializeMap = initializeMap;
 window.updateFavoritesList = updateFavoritesList;
+window.showFavoritesList = showFavoritesList;
 window.openFavoritesPopup = openFavoritesPopup;
 window.closeFavoritesPopup = closeFavoritesPopup;
 window.showLocationOnMap = showLocationOnMap;
@@ -437,12 +547,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // 데스크톱용 버튼들
     document.getElementById('randomPickBtn').addEventListener('click', pickRandomLocation);
     document.getElementById('resetBtn').addEventListener('click', resetMap);
-    document.getElementById('favoriteBtn').addEventListener('click', openFavoritesPopup);
+    document.getElementById('favoriteBtn').addEventListener('click', showFavoritesList); // PC에서는 목록만 표시
     
     // 모바일용 버튼들
     document.getElementById('randomPickBtnMobile').addEventListener('click', pickRandomLocation);
-    document.getElementById('favoritesListBtnMobile').addEventListener('click', openFavoritesPopup);
-    document.getElementById('favoriteBtnMobile').addEventListener('click', openFavoritesPopup);
+    document.getElementById('favoritesListBtnMobile').addEventListener('click', openFavoritesPopup); // 찜 리스트 버튼: 팝업 열기
+    // favoriteBtnMobile은 이미 pickRandomLocation에서 설정됨 (즐겨찾기 추가용)
     
     // 팝업 닫기 버튼
     document.getElementById('closePopupBtn').addEventListener('click', closeFavoritesPopup);
