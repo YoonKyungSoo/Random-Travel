@@ -29,22 +29,51 @@ function getAllLocations() {
     return allLocations;
 }
 
-// 랜덤 여행지 선택
+// 2단계 랜덤 선택: 지역 → 세부 지역
 function pickRandomLocation() {
-    const allLocations = getAllLocations();
-    if (allLocations.length === 0) {
+    // 1단계: 지역(시/도) 랜덤 선택
+    const regions = [
+        { name: '서울', data: window.seoulLocations },
+        { name: '부산', data: window.busanLocations },
+        { name: '대구', data: window.daeguLocations },
+        { name: '인천', data: window.incheonLocations },
+        { name: '광주', data: window.gwangjuLocations },
+        { name: '대전', data: window.daejeonLocations },
+        { name: '울산', data: window.ulsanLocations },
+        { name: '세종', data: window.sejongLocations },
+        { name: '경기', data: window.gyeonggiLocations },
+        { name: '강원', data: window.gangwonLocations },
+        { name: '충북', data: window.chungbukLocations },
+        { name: '충남', data: window.chungnamLocations },
+        { name: '전북', data: window.jeonbukLocations },
+        { name: '전남', data: window.jeonnamLocations },
+        { name: '경북', data: window.gyeongbukLocations },
+        { name: '경남', data: window.gyeongnamLocations },
+        { name: '제주', data: window.jejuLocations }
+    ];
+    
+    // 유효한 지역만 필터링
+    const validRegions = regions.filter(region => region.data && region.data.length > 0);
+    
+    if (validRegions.length === 0) {
         alert('지역 데이터를 불러올 수 없습니다.');
         return;
     }
+    
+    // 1단계: 지역 랜덤 선택 (각 지역이 동일한 확률)
+    const randomRegionIndex = Math.floor(Math.random() * validRegions.length);
+    const selectedRegion = validRegions[randomRegionIndex];
+    
+    // 2단계: 선택된 지역 내에서 세부 지역 랜덤 선택
+    const randomLocationIndex = Math.floor(Math.random() * selectedRegion.data.length);
+    const selectedLocation = selectedRegion.data[randomLocationIndex];
+    
+    console.log(`선택된 지역: ${selectedRegion.name} → ${selectedLocation.name}`);
     
     // 기존 마커 제거
     if (tempMarker) {
         tempMarker.setMap(null);
     }
-    
-    // 랜덤 위치 선택
-    const randomIndex = Math.floor(Math.random() * allLocations.length);
-    const selectedLocation = allLocations[randomIndex];
     
     // 지도 중심 이동
     const position = new kakao.maps.LatLng(selectedLocation.lat, selectedLocation.lng);
