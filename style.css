@@ -187,6 +187,32 @@ header p {
     box-shadow: 0 10px 30px rgba(0,0,0,0.2);
 }
 
+/* 즐겨찾기 컨테이너 스크롤 스타일링 */
+#favoritesContainer {
+    max-height: 300px;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+/* 스크롤바 스타일링 */
+#favoritesContainer::-webkit-scrollbar {
+    width: 8px;
+}
+
+#favoritesContainer::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+#favoritesContainer::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+#favoritesContainer::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
 .favorites-section h3 {
     color: #fd79a8;
     margin-bottom: 35px;
@@ -339,8 +365,15 @@ header p {
     }
     
     .popup-favorite-item .popup-actions {
-        flex-direction: column;
+        flex-direction: row;
         gap: 8px;
+    }
+    
+    .popup-favorite-item .btn {
+        flex: 1;
+        padding: 10px 8px;
+        font-size: 0.8rem;
+        min-height: 38px; /* iOS 터치 최적화 */
     }
 }
 
@@ -443,13 +476,20 @@ header p {
 
 .popup-favorite-item .popup-actions {
     display: flex;
-    gap: 10px;
+    gap: 8px;
+    margin-top: 12px;
 }
 
 .popup-favorite-item .btn {
     flex: 1;
-    padding: 8px 16px;
-    font-size: 0.9rem;
+    padding: 10px 12px;
+    font-size: 0.85rem;
+    border-radius: 8px;
+    font-weight: 500;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* 숨김 클래스 */
