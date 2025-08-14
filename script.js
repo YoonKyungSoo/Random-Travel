@@ -1,5 +1,6 @@
 // 카카오맵 기반 랜덤 여행지 픽 애플리케이션
 let tempMarker = null;
+let tempInfowindow = null; // 인포윈도우 전역 변수 추가
 let favorites = [];
 let currentRoute = [];
 
@@ -75,6 +76,11 @@ function pickRandomLocation() {
         tempMarker.setMap(null);
     }
     
+    // 기존 인포윈도우 닫기
+    if (tempInfowindow) {
+        tempInfowindow.close();
+    }
+    
     // 지도 중심 이동
     const position = new kakao.maps.LatLng(selectedLocation.lat, selectedLocation.lng);
     window.map.setCenter(position);
@@ -87,11 +93,11 @@ function pickRandomLocation() {
     });
     
     // 인포윈도우 생성
-    const infowindow = new kakao.maps.InfoWindow({
+    tempInfowindow = new kakao.maps.InfoWindow({
         content: `<div style="padding:10px;text-align:center;"><strong>${selectedLocation.name}</strong><br>${selectedLocation.description}</div>`
     });
     
-    infowindow.open(window.map, tempMarker);
+    tempInfowindow.open(window.map, tempMarker);
     
     // 결과 카드 표시
     showResultCard(selectedLocation);
@@ -334,6 +340,11 @@ function showLocationOnMap(lat, lng, name) {
         tempMarker.setMap(null);
     }
     
+    // 기존 인포윈도우 닫기
+    if (tempInfowindow) {
+        tempInfowindow.close();
+    }
+    
     // 새 마커 생성
     tempMarker = new kakao.maps.Marker({
         position: position,
@@ -341,11 +352,11 @@ function showLocationOnMap(lat, lng, name) {
     });
     
     // 인포윈도우 생성
-    const infowindow = new kakao.maps.InfoWindow({
+    tempInfowindow = new kakao.maps.InfoWindow({
         content: `<div style="padding:10px;text-align:center;"><strong>${name}</strong></div>`
     });
     
-    infowindow.open(window.map, tempMarker);
+    tempInfowindow.open(window.map, tempMarker);
 }
 
 // 즐겨찾기 팝업 열기 (모바일 전용)
@@ -382,6 +393,11 @@ function showOnMap(lat, lng, name) {
         tempMarker.setMap(null);
     }
     
+    // 기존 인포윈도우 닫기
+    if (tempInfowindow) {
+        tempInfowindow.close();
+    }
+    
     // 새 마커 생성
     tempMarker = new kakao.maps.Marker({
         position: position,
@@ -389,11 +405,11 @@ function showOnMap(lat, lng, name) {
     });
     
     // 인포윈도우 생성
-    const infowindow = new kakao.maps.InfoWindow({
+    tempInfowindow = new kakao.maps.InfoWindow({
         content: `<div style="padding:10px;text-align:center;"><strong>${name}</strong></div>`
     });
     
-    infowindow.open(window.map, tempMarker);
+    tempInfowindow.open(window.map, tempMarker);
 }
 
 // 즐겨찾기에서 제거
@@ -481,6 +497,12 @@ function resetMap() {
         tempMarker = null;
     }
     
+    // 기존 인포윈도우 닫기
+    if (tempInfowindow) {
+        tempInfowindow.close();
+        tempInfowindow = null;
+    }
+    
     document.getElementById('resultCard').classList.add('hidden');
     document.getElementById('favoriteBtn').classList.add('hidden');
     
@@ -551,6 +573,11 @@ function initializeMap() {
         // 클릭한 위치에 마커 생성
         if (tempMarker) {
             tempMarker.setMap(null);
+        }
+        
+        // 기존 인포윈도우 닫기
+        if (tempInfowindow) {
+            tempInfowindow.close();
         }
         
         tempMarker = new kakao.maps.Marker({
