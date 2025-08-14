@@ -93,6 +93,21 @@ function loadFavoritesList() {
     setupDragAndDrop();
 }
 
+// 도시명 포맷팅 함수
+function formatCityName(cityName) {
+    if (!cityName) return '';
+    
+    // "시청" 제거
+    let formattedName = cityName.replace(/시청/g, '');
+    
+    // "시"로 끝나지 않으면 "시" 추가
+    if (!formattedName.endsWith('시')) {
+        formattedName += '시';
+    }
+    
+    return formattedName;
+}
+
 // 여행지 선택/해제
 function toggleDestination(index, checked) {
     const favorites = JSON.parse(localStorage.getItem('travelFavorites') || '[]');
@@ -266,7 +281,7 @@ function updateMap() {
         
         // 마커에 번호 표시
         const infowindow = new kakao.maps.InfoWindow({
-            content: `<div style="padding:10px;text-align:center;"><strong>${index + 1}</strong><br>${dest.name}</div>`
+            content: `<div class="info-window-content"><span class="info-window-number">${index + 1}</span><span class="info-window-city">${formatCityName(dest.name)}</span></div>`
         });
         
         infowindow.open(plannerMap, marker);
