@@ -1,0 +1,455 @@
+/* 여행 계획 페이지 스타일 */
+
+/* 헤더 컨테이너 */
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.header-left {
+    flex: 1;
+}
+
+.header-right {
+    display: flex;
+    gap: 15px;
+}
+
+.back-btn {
+    background: linear-gradient(45deg, #74b9ff, #0984e3);
+    color: white;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.back-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+
+/* 플래너 컨테이너 */
+.planner-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* 플래너 폼 */
+.planner-form {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.planner-form h3 {
+    color: #0984e3;
+    margin-bottom: 25px;
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-row {
+    display: flex;
+    gap: 20px;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #2d3436;
+    font-weight: 500;
+    font-size: 1rem;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+    box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #74b9ff;
+}
+
+/* 여행지 선택 영역 */
+.destinations-section {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.destinations-section h3 {
+    color: #00b894;
+    margin-bottom: 25px;
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+.favorites-list {
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 15px;
+    border: 2px solid #e9ecef;
+}
+
+.favorite-checkbox-item {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    margin-bottom: 10px;
+    background: white;
+    border-radius: 10px;
+    border: 1px solid #dee2e6;
+    transition: all 0.3s ease;
+}
+
+.favorite-checkbox-item:hover {
+    border-color: #74b9ff;
+    box-shadow: 0 2px 8px rgba(116, 185, 255, 0.2);
+}
+
+.favorite-checkbox-item input[type="checkbox"] {
+    margin-right: 15px;
+    transform: scale(1.2);
+    accent-color: #74b9ff;
+}
+
+.favorite-checkbox-item .location-info {
+    flex: 1;
+}
+
+.favorite-checkbox-item .location-name {
+    font-weight: 600;
+    color: #2d3436;
+    margin-bottom: 5px;
+}
+
+.favorite-checkbox-item .location-description {
+    color: #636e72;
+    font-size: 0.9rem;
+}
+
+.favorite-checkbox-item .drag-handle {
+    cursor: move;
+    color: #b2bec3;
+    font-size: 1.2rem;
+    margin-left: 15px;
+}
+
+/* 일정 상세 설정 */
+.schedule-section {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.schedule-section h3 {
+    color: #fd79a8;
+    margin-bottom: 25px;
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+.schedule-container {
+    display: grid;
+    gap: 20px;
+}
+
+.schedule-day {
+    background: #f8f9fa;
+    border-radius: 15px;
+    padding: 25px;
+    border: 2px solid #e9ecef;
+}
+
+.schedule-day-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.schedule-day-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #2d3436;
+}
+
+.schedule-day-date {
+    color: #636e72;
+    font-size: 0.9rem;
+}
+
+.schedule-item {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    margin-bottom: 10px;
+    background: white;
+    border-radius: 10px;
+    border: 1px solid #dee2e6;
+}
+
+.schedule-item-number {
+    background: #74b9ff;
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    margin-right: 15px;
+    flex-shrink: 0;
+}
+
+.schedule-item-info {
+    flex: 1;
+}
+
+.schedule-item-name {
+    font-weight: 600;
+    color: #2d3436;
+    margin-bottom: 5px;
+}
+
+.schedule-item-description {
+    color: #636e72;
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+}
+
+.schedule-item-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.schedule-item-controls input,
+.schedule-item-controls select {
+    padding: 8px 12px;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+.schedule-item-controls input[type="time"] {
+    width: 120px;
+}
+
+.schedule-item-controls select {
+    width: 100px;
+}
+
+/* 지도 영역 */
+.map-section {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.map-section h3 {
+    color: #fdcb6e;
+    margin-bottom: 25px;
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+/* 액션 버튼들 */
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+}
+
+.action-buttons .btn {
+    min-width: 150px;
+}
+
+/* 모달 스타일 */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.modal.show {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 25px 30px 20px 30px;
+    border-bottom: 1px solid #eee;
+}
+
+.modal-header h3 {
+    color: #0984e3;
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.close-modal-btn {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    color: #999;
+    cursor: pointer;
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.close-modal-btn:hover {
+    background: #f0f0f0;
+    color: #666;
+}
+
+.modal-body {
+    padding: 20px 30px 30px 30px;
+}
+
+.saved-plans-list {
+    display: grid;
+    gap: 15px;
+}
+
+.saved-plan-item {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 15px;
+    border: 1px solid #dee2e6;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.saved-plan-item:hover {
+    border-color: #74b9ff;
+    background: #f0f8ff;
+}
+
+.saved-plan-title {
+    font-weight: 600;
+    color: #2d3436;
+    margin-bottom: 8px;
+}
+
+.saved-plan-details {
+    color: #636e72;
+    font-size: 0.9rem;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .header-container {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+    
+    .form-row {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .action-buttons .btn {
+        width: 100%;
+        max-width: 300px;
+    }
+    
+    .schedule-item-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .schedule-item-controls input,
+    .schedule-item-controls select {
+        width: 100%;
+    }
+}
+
+/* 드래그 앤 드롭 스타일 */
+.dragging {
+    opacity: 0.5;
+    transform: rotate(5deg);
+}
+
+.drag-over {
+    border-color: #74b9ff;
+    background: #f0f8ff;
+}
+
+/* 체크된 항목 스타일 */
+.favorite-checkbox-item.checked {
+    background: #e8f5e8;
+    border-color: #00b894;
+}
+
+.favorite-checkbox-item.checked .location-name {
+    color: #00b894;
+}

@@ -294,6 +294,147 @@ header p {
     background: #ee5a24;
 }
 
+/* 헤더 컨테이너 */
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.header-left {
+    flex: 1;
+}
+
+.header-right {
+    display: flex;
+    gap: 15px;
+}
+
+/* 햄버거 버튼 */
+.hamburger-btn {
+    background: linear-gradient(45deg, #74b9ff, #0984e3);
+    color: white;
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.hamburger-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+
+/* 사이드바 */
+.sidebar {
+    position: fixed;
+    top: 0;
+    right: -300px;
+    width: 300px;
+    height: 100vh;
+    background: white;
+    box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+    transition: right 0.3s ease;
+    z-index: 1001;
+    overflow-y: auto;
+}
+
+.sidebar.open {
+    right: 0;
+}
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+    background: linear-gradient(45deg, #74b9ff, #0984e3);
+    color: white;
+}
+
+.sidebar-header h3 {
+    margin: 0;
+    font-size: 1.3rem;
+}
+
+.close-sidebar-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 2rem;
+    cursor: pointer;
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.close-sidebar-btn:hover {
+    background: rgba(255,255,255,0.2);
+}
+
+.sidebar-content {
+    padding: 20px;
+}
+
+.sidebar-item {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    margin-bottom: 10px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    text-decoration: none;
+    color: #2d3436;
+    transition: all 0.3s ease;
+    border: 1px solid #e9ecef;
+}
+
+.sidebar-item:hover {
+    background: #e3f2fd;
+    border-color: #74b9ff;
+    transform: translateX(5px);
+}
+
+.sidebar-icon {
+    font-size: 1.5rem;
+    margin-right: 15px;
+}
+
+.sidebar-text {
+    font-weight: 500;
+    font-size: 1.1rem;
+}
+
+/* 사이드바 배경 오버레이 */
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.sidebar-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
 /* 반응형 디자인 */
 @media (max-width: 768px) {
     .container {
@@ -302,6 +443,18 @@ header p {
     
     header h1 {
         font-size: 2rem;
+    }
+    
+    .header-container {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+    
+    .header-right {
+        position: absolute;
+        top: 20px;
+        right: 20px;
     }
     
     /* 데스크톱 컨트롤 숨기기 */
@@ -374,6 +527,51 @@ header p {
         padding: 10px 8px;
         font-size: 0.8rem;
         min-height: 38px; /* iOS 터치 최적화 */
+    }
+    
+    .sidebar {
+        width: 250px;
+        right: -250px;
+    }
+    
+    .sidebar.open {
+        right: 0;
+    }
+    
+    .sidebar-item {
+        padding: 12px;
+        margin-bottom: 8px;
+    }
+    
+    .sidebar-icon {
+        font-size: 1.3rem;
+        margin-right: 12px;
+    }
+    
+    .sidebar-text {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .header-right {
+        top: 15px;
+        right: 15px;
+    }
+    
+    .hamburger-btn {
+        width: 45px;
+        height: 45px;
+        font-size: 1.3rem;
+    }
+    
+    .sidebar {
+        width: 220px;
+        right: -220px;
+    }
+    
+    .sidebar.open {
+        right: 0;
     }
 }
 
