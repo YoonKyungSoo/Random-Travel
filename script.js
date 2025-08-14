@@ -629,4 +629,45 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+    
+    // 햄버거 메뉴 이벤트 리스너
+    const hamburgerBtn = document.getElementById('hamburgerBtn');
+    const closeSidebarBtn = document.getElementById('closeSidebarBtn');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    
+    if (hamburgerBtn) {
+        hamburgerBtn.addEventListener('click', openSidebar);
+    }
+    if (closeSidebarBtn) {
+        closeSidebarBtn.addEventListener('click', closeSidebar);
+    }
+    if (sidebarOverlay) {
+        sidebarOverlay.addEventListener('click', closeSidebar);
+    }
 });
+
+// 햄버거 메뉴 사이드바 열기
+function openSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    
+    if (sidebar) {
+        sidebar.classList.add('open');
+    }
+    if (sidebarOverlay) {
+        sidebarOverlay.classList.add('show');
+    }
+}
+
+// 햄버거 메뉴 사이드바 닫기
+function closeSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    
+    if (sidebar) {
+        sidebar.classList.remove('open');
+    }
+    if (sidebarOverlay) {
+        sidebarOverlay.classList.remove('show');
+    }
+}

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🗓️ 여행 일정 계획 - 랜덤 여행지 픽!</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="planner.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- 카카오맵 API 스크립트 -->
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=c837a316c42b3e191934f21e1921839f"></script>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="header-container">
+                <div class="header-left">
+                    <h1>🗓️ 여행 일정 계획</h1>
+                    <p>즐겨찾기한 여행지로 완벽한 여행 계획을 만들어보세요!</p>
+                </div>
+                <div class="header-right">
+                    <a href="index.html" class="back-btn">🏠 홈으로</a>
+                </div>
+            </div>
+        </header>
+
+        <div class="planner-container">
+            <!-- 일정 입력 폼 -->
+            <div class="planner-form">
+                <h3>📝 여행 계획 만들기</h3>
+                <div class="form-group">
+                    <label for="tripTitle">여행 제목</label>
+                    <input type="text" id="tripTitle" placeholder="예: 제주도 3박4일 여행" maxlength="50">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="tripDays">여행 기간</label>
+                        <select id="tripDays">
+                            <option value="1">1박 2일</option>
+                            <option value="2">2박 3일</option>
+                            <option value="3">3박 4일</option>
+                            <option value="4">4박 5일</option>
+                            <option value="5">5박 6일</option>
+                            <option value="6">6박 7일</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="startDate">출발일</label>
+                        <input type="date" id="startDate">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 여행지 선택 영역 -->
+            <div class="destinations-section">
+                <h3>📍 방문할 여행지 선택</h3>
+                <div class="destinations-container">
+                    <div id="favoritesList" class="favorites-list">
+                        <!-- 즐겨찾기 목록이 여기에 로드됩니다 -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 일정 상세 설정 -->
+            <div class="schedule-section">
+                <h3>⏰ 일정 상세 설정</h3>
+                <div id="scheduleContainer" class="schedule-container">
+                    <!-- 일정이 여기에 동적으로 생성됩니다 -->
+                </div>
+            </div>
+
+            <!-- 지도 영역 -->
+            <div class="map-section">
+                <h3>🗺️ 여행 경로 지도</h3>
+                <div class="map-container">
+                    <div id="plannerMap" style="width:100%;height:400px;"></div>
+                </div>
+            </div>
+
+            <!-- 액션 버튼들 -->
+            <div class="action-buttons">
+                <button id="savePlanBtn" class="btn primary">💾 일정 저장</button>
+                <button id="loadPlanBtn" class="btn secondary">📂 일정 불러오기</button>
+                <button id="sharePlanBtn" class="btn accent">📤 일정 공유</button>
+                <button id="clearPlanBtn" class="btn danger">🗑️ 일정 초기화</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 일정 불러오기 모달 -->
+    <div id="loadModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📂 저장된 일정 불러오기</h3>
+                <button class="close-modal-btn" onclick="closeLoadModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div id="savedPlansList" class="saved-plans-list">
+                    <!-- 저장된 일정 목록이 여기에 표시됩니다 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 지역 데이터 파일들 -->
+    <script src="locations/seoul-locations.js"></script>
+    <script src="locations/busan-locations.js"></script>
+    <script src="locations/daegu-locations.js"></script>
+    <script src="locations/incheon-locations.js"></script>
+    <script src="locations/gwangju-locations.js"></script>
+    <script src="locations/daejeon-locations.js"></script>
+    <script src="locations/ulsan-locations.js"></script>
+    <script src="locations/sejong-locations.js"></script>
+    <script src="locations/gyeonggi-locations.js"></script>
+    <script src="locations/gangwon-locations.js"></script>
+    <script src="locations/chungbuk-locations.js"></script>
+    <script src="locations/chungnam-locations.js"></script>
+    <script src="locations/jeonbuk-locations.js"></script>
+    <script src="locations/jeonnam-locations.js"></script>
+    <script src="locations/gyeongbuk-locations.js"></script>
+    <script src="locations/gyeongnam-locations.js"></script>
+    <script src="locations/jeju-locations.js"></script>
+    
+    <!-- 여행 계획 기능 -->
+    <script src="planner.js"></script>
+</body>
+
+</html>
